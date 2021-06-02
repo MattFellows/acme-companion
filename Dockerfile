@@ -1,9 +1,9 @@
-FROM golang:1.16.3-alpine AS go-builder
+FROM arm32v7/golang AS go-builder
 
 ENV DOCKER_GEN_VERSION=0.7.6
 
 # Build docker-gen
-RUN apk add --no-cache --virtual .build-deps git \
+RUN apt-get install git \
     && git clone https://github.com/jwilder/docker-gen \
     && cd /go/docker-gen \
     && git -c advice.detachedHead=false checkout $DOCKER_GEN_VERSION \
@@ -12,10 +12,9 @@ RUN apk add --no-cache --virtual .build-deps git \
     && go clean -cache \
     && mv docker-gen /usr/local/bin/ \
     && cd - \
-    && rm -rf /go/docker-gen \
-    && apk del .build-deps
+    && rm -rf /go/docker-gen 
 
-FROM alpine:3.13.5
+FROM arm32v7/alpine:3.13.5
 
 LABEL maintainer="Nicolas Duchon <nicolas.duchon@gmail.com> (@buchdag)"
 
